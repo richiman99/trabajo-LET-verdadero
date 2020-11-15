@@ -1,0 +1,36 @@
+---
+title: "introducción"
+author: "Ricardo Torres"
+date: "07-11-2020"
+output:
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("rsample")
+library(rio)
+```
+
+```{r, echo=TRUE, include=FALSE}
+
+```
+
+
+# Introducción
+
+En este informe se hablará sobre la predicción de los paros cardiacos, esta información viene dada por 12 Clínicas de estados unidos que intentan predecir los eventos que lo producen.
+
+Existen muchas causas de muerte, pero las más importantes son las enfermedades cardiovasculares, llevándose 17,9 millones de vidas 
+
+Los paros cardiacos son los eventos más comunes de enfermedades cardiovasculares. 
+
+
+Las personas con enfermedades vasculares o con un alto riesgo de tenerlas, necesitan una detección temprana de un posible paro cardiaco, por ende, un modelo de machine learning puede ser de gran ayuda, lograr prever esto, podría salvar muchas vidas alrededor del mundo, entender mejor este problema es muy importante, ya que un paro cardiaco es un evento el cual ninguno de nosotros esta libre de tenerlo durante nuestra vida, y si tenemos una manera de evitarlo, podría subir nuestra expectativa de vida
+
+Con este análisis se desea responder a ciertas preguntas: ¿Es posible detectar tempranamente un posible paro cardiaco en una persona?, y si es así, ¿influye alguna enfermedad, si fuma o incluso su sexo en un posible paro cardiaco?
+
+
+Se mostraran diferentes gráficos para observar si existe alguna relación entre algunas variables, para si poder hacer un mejor análisis, se analizaran estos datos y se explicaran los resultados, para luego concluir en base a lo que tenemos y en relación a el tema en cuestión 
+

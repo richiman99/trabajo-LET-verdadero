@@ -1,0 +1,30 @@
+---
+title: "libro de codigos"
+author: "Ricardo Torres"
+date: "15-11-2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=TRUE,include=FALSE}
+
+variable = c("age","anaemia","creatinine_phosphokinase","diabetes","ejection_fraction","high_blood_pressure","platelets","serum_creatinine","serum_sodium","sex","smoking","time","DEATH_EVENT")
+
+tipo_de_variable = c("números naturales","0 o 1","números naturales","0 o 1","números naturales","0 o 1","números reales","números reales","números naturales","0 o 1","0 o 1","números naturales","0 o 1")
+
+descripcion = c("edad de la persona","si tiene anemia","los niveles de cratinina", "si tiene diabetes", "medida del porcentaje de sangre que sale de tu corazón cada vez que se contrae", "si tiene presion alta", "numero de plaquetas", "niveles de suero creatinina", "nivel se sodio serico", "sexo de la persona, 0 mujer, 1 hombre", "si es fumador", "tiempo en estado critico","si murio")
+tabla = data.frame(cbind(variable,tipo_de_variable,descripcion))
+
+```
+
+```{r, echo=TRUE}
+
+tabla = data.frame(stringsAsFactors=FALSE,variable,tipo_de_variable,descripcion)
+
+tabla
+
+
+```
