@@ -11,11 +11,12 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 library("rsample")
 library(rio)
+library(ggplot2)
+library(ggthemes)
+corazon = import("heart_failure_clinical_records_dataset.csv")
+
 ```
 
-```{r, echo=TRUE, include=FALSE}
-
-```
 
 
 # Introducción
@@ -34,3 +35,72 @@ Con este análisis se desea responder a ciertas preguntas: ¿Es posible detectar
 
 Se mostraran diferentes gráficos para observar si existe alguna relación entre algunas variables, para si poder hacer un mejor análisis, se analizaran estos datos y se explicaran los resultados, para luego concluir en base a lo que tenemos y en relación a el tema en cuestión 
 
+# desarrollo
+
+## edad
+
+Primero vamos a ver la relación de la edad con la cantidad de paros cardiacos en los pacientes evaluados
+
+```{r, echo=FALSE,message =FALSE,warning=FALSE}
+ggplot(corazon,aes(x = age))+geom_histogram( color = "black",alpha = 0.5)+
+  scale_x_continuous(breaks = seq(40,100,10))
+
+```
+
+Como podemos ver en el gráfico, las personas de 60 años aproximadamente son las que tienen una mayor probabilidad de obtener un paro cardiaco.
+
+```{r, echo=FALSE,message =FALSE,warning=FALSE}
+corazon$DEATH_EVENT <- factor(corazon$DEATH_EVENT)
+ggplot(corazon,aes(x = age, fill = DEATH_EVENT))+geom_histogram(color = "black", position = "identity",alpha = 0.5)+scale_fill_manual(values = c("white", "blue"), name = "muertes",
+  labels = c("no","si"))+
+  scale_x_continuous(breaks = seq(40,100,10))
+```
+
+y como se puede ver, finalmente tenemos que las personas sobre los 70 años tiene unamayor probabilidad de morir por un paro cardiaco que recuperarse de uno, y además, podemos decir que aun cuando las personas de 60 años tienen una mayor probabilidad de obtener un paro cardiaco, las probabilidades de sobrevivir a uno son casi de un 50 %
+
+## sexo
+
+Ahora veamos si tiene algo que ver en si hay una mayor probabilidad de morir si la persona es hombre o mujer
+
+```{r, echo=FALSE,message =FALSE,warning=FALSE}
+ggplot(corazon, aes(x = DEATH_EVENT, fill = factor(sex)))+geom_bar(color ="black")+
+  scale_fill_manual(values = c("white", "blue"), name = "sexo",
+  labels = c("mujer","hombre"))
+```
+
+Como se puede ver, esto nos indica que los hombres sufren una mayor cantidad de paros cardiacos que las mujerses, pero que la probabilidad de fallecer es practicamente la misma.
+
+
+Ahora veremos si el sexo significa algo en la edad en que podria ocurrir un paro cardiaco
+
+```{r, echo=FALSE,message =FALSE,warning=FALSE}
+corazon$sex <- factor(corazon$sex)
+ggplot(corazon,aes(x = age, fill = sex))+geom_histogram(color = "black",alpha = 0.5)+scale_fill_manual(values = c("blue", "white"), name = "sexo",
+  labels = c("mujer","hombre"))+
+  scale_x_continuous(breaks = seq(40,100,10))
+```
+ y como se puede observar, no influye la edad en este aspecto
+
+## anemia 
+
+La anemia se produce por la falta de glóbulos rojos o la presencia de glóbulos rojos disfuncionales en el cuerpo, lo que provoca una reducción del flujo de oxígeno hacia los órganos.
+Veamos si esta representa un problema para ver si se puede sobrevivir a un paro cardiaco 
+
+```{r, echo=FALSE,message =FALSE,warning=FALSE}
+ggplot(corazon, aes(x = DEATH_EVENT, fill = factor(anaemia)))+geom_bar(color ="black")+
+  scale_fill_manual(values = c("white", "blue"), name = "anemia",
+  labels = c("no","si"))
+```
+
+y como podemos observar, la probabilidad de morir teniendo anemia aumenta solo un poco, siendo una variable sin necesidad de tener en cuenta en este sentido
+
+## presión alta
+
+veamos si influye que la persona que tenga un paro cardiaco tenga presión alta de la sangre
+
+```{r, echo=FALSE,message =FALSE,warning=FALSE}
+ggplot(corazon, aes(x = DEATH_EVENT, fill = factor(high_blood_pressure)))+geom_bar(color = "black")+
+  scale_fill_manual(values = c("white", "blue"), name = "alta presión", labels = c("no","si"))
+```
+
+Y como podemos observar si hay una mayor probabilidad de morir si la persona tiene una presión alta
