@@ -1,5 +1,5 @@
 ---
-title: "introducción"
+title: "trabajo LET"
 author: "Ricardo Torres"
 date: "07-11-2020"
 output:
@@ -11,8 +11,10 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 library("rsample")
 library(rio)
+library(dplyr)
 library(ggplot2)
 library(ggthemes)
+library(caret)
 corazon = import("heart_failure_clinical_records_dataset.csv")
 
 ```
@@ -21,19 +23,35 @@ corazon = import("heart_failure_clinical_records_dataset.csv")
 
 # Introducción
 
-En este informe se hablará sobre la predicción de los paros cardiacos, esta información viene dada por 12 Clínicas de estados unidos que intentan predecir los eventos que lo producen.
-
 Existen muchas causas de muerte, pero las más importantes son las enfermedades cardiovasculares, llevándose 17,9 millones de vidas 
 
 Los paros cardiacos son los eventos más comunes de enfermedades cardiovasculares. 
 
+Las personas con enfermedades vasculares o con un alto riesgo de tenerlas, necesitan una detección temprana de un posible paro cardiaco, por ende, lograr prever esto, podría salvar muchas vidas alrededor del mundo, entender mejor este problema es muy importante, ya que un paro cardiaco es un evento el cual ninguno de nosotros esta libre de tenerlo durante nuestra vida, y si tenemos una manera de evitarlo, podría subir nuestra expectativa de vida
 
-Las personas con enfermedades vasculares o con un alto riesgo de tenerlas, necesitan una detección temprana de un posible paro cardiaco, por ende, un modelo de machine learning puede ser de gran ayuda, lograr prever esto, podría salvar muchas vidas alrededor del mundo, entender mejor este problema es muy importante, ya que un paro cardiaco es un evento el cual ninguno de nosotros esta libre de tenerlo durante nuestra vida, y si tenemos una manera de evitarlo, podría subir nuestra expectativa de vida
-
-Con este análisis se desea responder a ciertas preguntas: ¿Es posible detectar tempranamente un posible paro cardiaco en una persona?, y si es así, ¿influye alguna enfermedad, si fuma o incluso su sexo en un posible paro cardiaco?
+Con este análisis se desea responder a la pregunta: ¿influye alguna enfermedad, si fuma o incluso su sexo en un posible paro cardiaco?
 
 
 Se mostraran diferentes gráficos para observar si existe alguna relación entre algunas variables, para si poder hacer un mejor análisis, se analizaran estos datos y se explicaran los resultados, para luego concluir en base a lo que tenemos y en relación a el tema en cuestión 
+
+# metodos
+
+En este informe se hablará sobre la predicción de los paros cardiacos, esta información viene dada por 12 Clínicas de estados unidos que intentan predecir los eventos que lo producen.
+
+Las variables son las siguientes:
+
+1) age = edad de la persona
+2) anemia = con un $1$ si tiene anemia o un $0$ si no
+3) diabetes = con un $1$ si tiene diabetes o un $0$ si no
+4) ejection_fraction = porcentaje de sangre que abandona el corazón con cada latido
+5) platelets = cantidad de plaquetas en la sangre
+6) sex = sexo de la persona
+7) smoking = con un $1$ si la prsona fuma o un $0$ si no
+8) DEATH_EVENT = si la persona falleció durante el periodo de estudio
+9) creatinine_phosphokinase = los niveles de la enzima cratinina fosfokinasa
+10) serum_creatinine = niveles de cratinina en la sangre
+11) serum_sodium = niveles de sodio en la sangre
+12) time = los dias en periodo de observacion de la persona
 
 # desarrollo
 
@@ -42,52 +60,55 @@ Se mostraran diferentes gráficos para observar si existe alguna relación entre
 Primero vamos a ver la relación de la edad con la cantidad de paros cardiacos en los pacientes evaluados
 
 ```{r, echo=FALSE,message =FALSE,warning=FALSE}
-ggplot(corazon,aes(x = age))+geom_histogram( color = "black",alpha = 0.5)+
+
+ggplot(corazon,aes(x = age))+geom_histogram( color = "black",alpha = 0.5)+labs(title = "1) Edad", y = "Cantidad", x = "Edad")+
   scale_x_continuous(breaks = seq(40,100,10))
 
 ```
 
-Como podemos ver en el gráfico, las personas de 60 años aproximadamente son las que tienen una mayor probabilidad de obtener un paro cardiaco.
+Como podemos ver en el gráfico 1, las personas de 60 años aproximadamente son las que tienen una mayor probabilidad de obtener un paro cardiaco.
 
 ```{r, echo=FALSE,message =FALSE,warning=FALSE}
 corazon$DEATH_EVENT <- factor(corazon$DEATH_EVENT)
-ggplot(corazon,aes(x = age, fill = DEATH_EVENT))+geom_histogram(color = "black", position = "identity",alpha = 0.5)+scale_fill_manual(values = c("white", "blue"), name = "muertes",
+ggplot(corazon,aes(x = age, fill = DEATH_EVENT))+geom_histogram(color = "black", position = "identity",alpha = 0.5)+labs(title = "2) Edad y muerte", y = "Cantidad", x = "Edad")+scale_fill_manual(values = c("white", "blue"), name = "muertes",
   labels = c("no","si"))+
   scale_x_continuous(breaks = seq(40,100,10))
 ```
 
-y como se puede ver, finalmente tenemos que las personas sobre los 70 años tiene unamayor probabilidad de morir por un paro cardiaco que recuperarse de uno, y además, podemos decir que aun cuando las personas de 60 años tienen una mayor probabilidad de obtener un paro cardiaco, las probabilidades de sobrevivir a uno son casi de un 50 %
+y como se puede veren el gráfico 2, finalmente tenemos que las personas sobre los 70 años tiene una mayor probabilidad de morir por un paro cardiaco que recuperarse de uno, y además, podemos decir que aun cuando las personas de 60 años tienen una mayor probabilidad de obtener un paro cardiaco, las probabilidades de sobrevivir a uno son casi de un 50 %
 
 ## sexo
 
 Ahora veamos si tiene algo que ver en si hay una mayor probabilidad de morir si la persona es hombre o mujer
 
 ```{r, echo=FALSE,message =FALSE,warning=FALSE}
-ggplot(corazon, aes(x = DEATH_EVENT, fill = factor(sex)))+geom_bar(color ="black")+
+ggplot(corazon, aes(x = DEATH_EVENT, fill = factor(sex)))+geom_bar(color ="black")+labs(title = "3) Sexo", y = "Cantidad",x = "Muerte")+
   scale_fill_manual(values = c("white", "blue"), name = "sexo",
   labels = c("mujer","hombre"))
 ```
 
-Como se puede ver, esto nos indica que los hombres sufren una mayor cantidad de paros cardiacos que las mujerses, pero que la probabilidad de fallecer es practicamente la misma.
+Como se puede ver en 3, esto nos indica la probabilidad de fallecer por un pro cardiaco es la misma practicamente si eres hombre o mujer 
 
 
 Ahora veremos si el sexo significa algo en la edad en que podria ocurrir un paro cardiaco
 
 ```{r, echo=FALSE,message =FALSE,warning=FALSE}
 corazon$sex <- factor(corazon$sex)
-ggplot(corazon,aes(x = age, fill = sex))+geom_histogram(color = "black",alpha = 0.5)+scale_fill_manual(values = c("blue", "white"), name = "sexo",
+ggplot(corazon,aes(x = age, fill = sex))+geom_histogram(color = "black",alpha = 0.5)+labs(title = "4) Sexo y edad", y = "Cantidad",x = "Edad")+scale_fill_manual(values = c("blue", "white"), name = "sexo",
   labels = c("mujer","hombre"))+
   scale_x_continuous(breaks = seq(40,100,10))
 ```
- y como se puede observar, no influye la edad en este aspecto
+ 
+y como se puede observar en 4, no influye la edad en este aspecto, por ende no podemos sacar nada aun con lo que tenemos
+ 
+Veamos ahora las enfermedades y si eso nos causa una mayor probabilidad de fallecer
 
 ## anemia 
 
-La anemia se produce por la falta de glóbulos rojos o la presencia de glóbulos rojos disfuncionales en el cuerpo, lo que provoca una reducción del flujo de oxígeno hacia los órganos.
 Veamos si esta representa un problema para ver si se puede sobrevivir a un paro cardiaco 
 
 ```{r, echo=FALSE,message =FALSE,warning=FALSE}
-ggplot(corazon, aes(x = DEATH_EVENT, fill = factor(anaemia)))+geom_bar(color ="black")+
+ggplot(corazon, aes(x = DEATH_EVENT, fill = factor(anaemia)))+geom_bar(color ="black")+labs(title = "5) Anemia", y = "Cantidad",x = "Muerte")+
   scale_fill_manual(values = c("white", "blue"), name = "anemia",
   labels = c("no","si"))
 ```
@@ -99,8 +120,61 @@ y como podemos observar, la probabilidad de morir teniendo anemia aumenta solo u
 veamos si influye que la persona que tenga un paro cardiaco tenga presión alta de la sangre
 
 ```{r, echo=FALSE,message =FALSE,warning=FALSE}
-ggplot(corazon, aes(x = DEATH_EVENT, fill = factor(high_blood_pressure)))+geom_bar(color = "black")+
+ggplot(corazon, aes(x = DEATH_EVENT, fill = factor(high_blood_pressure)))+geom_bar(color = "black")+labs(title = "6) Presión alta", y = "Cantidad",x = "muerte")+
   scale_fill_manual(values = c("white", "blue"), name = "alta presión", labels = c("no","si"))
 ```
 
 Y como podemos observar si hay una mayor probabilidad de morir si la persona tiene una presión alta
+```{r, echo=FALSE,message =FALSE,warning=FALSE}
+limpieza <- corazon %>% summarise(DEATH_EVENT = as.factor(DEATH_EVENT),anaemia = as.factor(anaemia),diabetes = as.factor(diabetes),high_blood_pressure = as.factor(high_blood_pressure),sex = as.factor(sex),smoking = as.factor(smoking),age,creatinine_phosphokinase, ejection_fraction, platelets, serum_creatinine, serum_sodium, time)
+
+
+attach(limpieza)
+boxplot(ejection_fraction~DEATH_EVENT, main="Boxplot de fracción de ejección",xlab = "Muerte", ylab = "Cantidad")
+boxplot(time~DEATH_EVENT, main="Boxplot de tiempo", xlab = "Muerte", ylab = "Tiempo")
+
+```
+
+Con estos 2 boxplot tenemos que en tiempo que pasa la persona en observación y la fracción de ejección hay una gran diferencia dependiendo si la persona muere o no
+
+
+Ahora vamos a hacer nuestro modelo, para ello vamos a ver nuestro analisis anterior y vamos a armar un modelo de regresion logistica
+
+```{r, echo=FALSE,message =FALSE,warning=FALSE}
+
+data_split = initial_split(limpieza, prop = 0.7)
+training = training(data_split)
+
+
+set.seed(116)
+modelo1 = train(DEATH_EVENT ~ age+time+ejection_fraction, data = training, method = "glm", family = binomial(link="logit"), trControl = trainControl(method = "cv", number = 10)
+)
+
+set.seed(116)
+modelo2 = train(DEATH_EVENT ~ age+time+anaemia, data = training, method = "glm", family = binomial(link="logit"), trControl = trainControl(method = "cv", number = 10)
+)
+
+summary(resamples(list(modelo1,modelo2)))$statistics$Accuracy
+
+```
+
+
+Se acaban de hacer 2 modelos y tenemos que nuestro mejor modelo es el 1, con las variables: edad, tiempo y fracción de ejección
+
+```{r, echo=FALSE,message =FALSE,warning=FALSE}
+
+testing <- testing(data_split)
+prediccion = predict(modelo1,newdata = testing)
+confusionMatrix(prediccion, testing$DEATH_EVENT)
+
+```
+
+y como acabamos de ver, logramos alcanzar una predicción suficientemente buena para nuestro modelo.
+
+# Conclusión
+
+Lo que logramos en este trabajo es lograr detectar un paro cardiaco con una alto porcentaje de exito con nuestro modelo final, esto lo logramos con las variables que más variaban con la variable EVENT_DEATH.
+
+Además, nos hicimos una gran idea de lo que significa un paro cardiaco y las probabilidades de sobrevivir a uno dependiendo de diferentes factores.
+
+Lograr un avance como este nos da un pie a crear un sistema con el cual se podrían salvar una gran cantidad de vidas de personas que no saben que podrian sufrir en algún momento un paro cardiaco y también hacer presión para que la gente que sufra alguna de estas enfermedades como una presión alta se cuide constantemente, ya que tiene una mayor probabilidad de sufrir un paro cardiaco que el resto de la gente.
