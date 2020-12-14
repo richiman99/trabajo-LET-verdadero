@@ -478,33 +478,33 @@ summary {
 <p>Con estos 2 boxplot tenemos que en tiempo que pasa la persona en observación y la fracción de ejección hay una gran diferencia dependiendo si la persona muere o no</p>
 <p>Ahora vamos a hacer nuestro modelo, para ello vamos a ver nuestro analisis anterior y vamos a armar un modelo de regresion logistica</p>
 <pre><code>##             Min.   1st Qu.    Median      Mean   3rd Qu.      Max. NA&#39;s
-## Model1 0.7142857 0.8095238 0.8095238 0.8238095 0.8571429 0.9047619    0
-## Model2 0.6190476 0.7261905 0.7619048 0.7857143 0.8571429 0.9047619    0</code></pre>
+## Model1 0.6190476 0.7819264 0.8333333 0.8250216 0.8892857 0.9523810    0
+## Model2 0.7142857 0.7738095 0.8095238 0.8047619 0.8095238 0.9047619    0</code></pre>
 <p>Se acaban de hacer 2 modelos y tenemos que nuestro mejor modelo es el 1, con las variables: edad, tiempo y fracción de ejección</p>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
 ## Prediction  0  1
-##          0 54 10
-##          1  6 19
+##          0 57  9
+##          1  4 19
 ##                                           
-##                Accuracy : 0.8202          
-##                  95% CI : (0.7245, 0.8936)
-##     No Information Rate : 0.6742          
-##     P-Value [Acc &gt; NIR] : 0.001565        
+##                Accuracy : 0.8539          
+##                  95% CI : (0.7632, 0.9199)
+##     No Information Rate : 0.6854          
+##     P-Value [Acc &gt; NIR] : 0.000218        
 ##                                           
-##                   Kappa : 0.5757          
+##                   Kappa : 0.6441          
 ##                                           
-##  Mcnemar&#39;s Test P-Value : 0.453255        
+##  Mcnemar&#39;s Test P-Value : 0.267257        
 ##                                           
-##             Sensitivity : 0.9000          
-##             Specificity : 0.6552          
-##          Pos Pred Value : 0.8438          
-##          Neg Pred Value : 0.7600          
-##              Prevalence : 0.6742          
-##          Detection Rate : 0.6067          
-##    Detection Prevalence : 0.7191          
-##       Balanced Accuracy : 0.7776          
+##             Sensitivity : 0.9344          
+##             Specificity : 0.6786          
+##          Pos Pred Value : 0.8636          
+##          Neg Pred Value : 0.8261          
+##              Prevalence : 0.6854          
+##          Detection Rate : 0.6404          
+##    Detection Prevalence : 0.7416          
+##       Balanced Accuracy : 0.8065          
 ##                                           
 ##        &#39;Positive&#39; Class : 0               
 ## </code></pre>

@@ -126,11 +126,12 @@ ggplot(corazon, aes(x = DEATH_EVENT, fill = factor(high_blood_pressure)))+geom_b
 
 Y como podemos observar si hay una mayor probabilidad de morir si la persona tiene una presión alta
 ```{r, echo=FALSE,message =FALSE,warning=FALSE}
-limpieza <- corazon %>% summarise(DEATH_EVENT = as.factor(DEATH_EVENT),anaemia = as.factor(anaemia),diabetes = as.factor(diabetes),high_blood_pressure = as.factor(high_blood_pressure),sex = as.factor(sex),smoking = as.factor(smoking),age,creatinine_phosphokinase, ejection_fraction, platelets, serum_creatinine, serum_sodium, time)
+limpieza = corazon %>% summarise(DEATH_EVENT = as.factor(DEATH_EVENT),anaemia = as.factor(anaemia),diabetes = as.factor(diabetes),high_blood_pressure = as.factor(high_blood_pressure),sex = as.factor(sex),smoking = as.factor(smoking),age,creatinine_phosphokinase, ejection_fraction, platelets, serum_creatinine, serum_sodium, time)
 
 
 attach(limpieza)
 boxplot(ejection_fraction~DEATH_EVENT, main="Boxplot de fracción de ejección",xlab = "Muerte", ylab = "Cantidad")
+
 boxplot(time~DEATH_EVENT, main="Boxplot de tiempo", xlab = "Muerte", ylab = "Tiempo")
 
 ```
@@ -142,17 +143,15 @@ Ahora vamos a hacer nuestro modelo, para ello vamos a ver nuestro analisis anter
 
 ```{r, echo=FALSE,message =FALSE,warning=FALSE}
 
-data_split = initial_split(limpieza, prop = 0.7)
-training = training(data_split)
+split = initial_split(limpieza, prop = 0.7)
+training = training(split)
 
 
-set.seed(116)
-modelo1 = train(DEATH_EVENT ~ age+time+ejection_fraction, data = training, method = "glm", family = binomial(link="logit"), trControl = trainControl(method = "cv", number = 10)
-)
 
-set.seed(116)
-modelo2 = train(DEATH_EVENT ~ age+time+anaemia, data = training, method = "glm", family = binomial(link="logit"), trControl = trainControl(method = "cv", number = 10)
-)
+modelo1 = train(DEATH_EVENT ~ age+time+ejection_fraction, data = training, method = "glm", family = binomial(link="logit"), trControl = trainControl(method = "cv", number = 10))
+
+
+modelo2 = train(DEATH_EVENT ~ age+time+anaemia, data = training, method = "glm", family = binomial(link="logit"), trControl = trainControl(method = "cv", number = 10))
 
 summary(resamples(list(modelo1,modelo2)))$statistics$Accuracy
 
@@ -163,9 +162,9 @@ Se acaban de hacer 2 modelos y tenemos que nuestro mejor modelo es el 1, con las
 
 ```{r, echo=FALSE,message =FALSE,warning=FALSE}
 
-testing <- testing(data_split)
-prediccion = predict(modelo1,newdata = testing)
-confusionMatrix(prediccion, testing$DEATH_EVENT)
+testeo = testing(split)
+prediccion = predict(modelo1,newdata = testeo)
+confusionMatrix(prediccion, testeo$DEATH_EVENT)
 
 ```
 
